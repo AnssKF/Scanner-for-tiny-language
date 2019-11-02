@@ -1,3 +1,5 @@
+const { isValidId, isValidSymbol } = require('./error-handler')
+
 const STATE = {
     START: 'START',
     DONE: 'DONE',
@@ -12,11 +14,12 @@ const TOKENTYPE = {
     NUM: 'NUMBER',
     RESERVED: 'RESERVED WORD',
     SPECIAL: 'SPECIAL SYMBOL',
-    COMMENT: 'COMMENT'
+    COMMENT: 'COMMENT',
+    ERR: 'ERROR'
 }
 
-const lineTokenizer = (line, lineNumber) => {
-    line = line.trim()
+const tokenizer = (code) => {
+    line = code.trim()
 
     let _state = STATE.START;
     let startingIndex = 0
@@ -50,7 +53,7 @@ const lineTokenizer = (line, lineNumber) => {
                     }
 
                     if(isSpecialChr(chr)){ // :=
-                        if(chr == ':' || chr == '!' || chr == '='){
+                        if(chr == ':'){
                             _state = STATE.ASSIGN;
                             token += chr;
                             tokenType = TOKENTYPE.SPECIAL;
@@ -59,8 +62,14 @@ const lineTokenizer = (line, lineNumber) => {
 
                         if( chr == '{' ){
                             _state = STATE.COMMENT;
-                            token += chr;
+                            // token += chr; // comments not included in tokens array
                             tokenType = TOKENTYPE.SPECIAL;
+                            break;
+                        }
+
+                        if( chr == '}'){
+                            _state = STATE.DONE;
+                            tokenType - TOKENTYPE.SPECIAL;
                             break;
                         }
 
@@ -121,7 +130,7 @@ const lineTokenizer = (line, lineNumber) => {
 
                 case STATE.COMMENT:
                     if(line[i-1] == '{'){
-                        tokensArr.push({token, tokenType});
+                        // tokensArr.push({token, tokenType}); // Comments not included in tokens array
                         token = '';
                         tokenType = TOKENTYPE.COMMENT;
                     }
@@ -133,7 +142,7 @@ const lineTokenizer = (line, lineNumber) => {
                     }
 
                     _state = STATE.COMMENT;
-                    token += chr;
+                    // token += chr;
                     tokenType = TOKENTYPE.COMMENT;
                     break;
 
@@ -151,9 +160,36 @@ const lineTokenizer = (line, lineNumber) => {
         } // for chr
 
         if(isReservedWord(token) && tokenType == TOKENTYPE.ID){
-            tokenType = TOKENTYPE.RESERVED
+            /**
+             * Handle Token Type of Reserved Words
+             */
+            // tokenType = TOKENTYPE.RESERVED;
+            tokenType = token.toUpperCase();
         }
-        tokensArr.push({token, tokenType});
+
+        if(tokenType == TOKENTYPE.SPECIAL){
+            /**
+             * Handle Token Type of Special Symbols
+             */
+
+            if(!isValidSymbol(token)){
+                tokenType = TOKENTYPE.ERR;
+            }
+
+            if(token in SYMBOLSTYPES){
+                tokenType = SYMBOLSTYPES[token]
+            }
+        }
+
+        if(tokenType == TOKENTYPE.ID){
+            if(!isValidId(token)){
+                tokenType = TOKENTYPE.ERR
+            }
+        }
+        // check error
+        if(token){
+            tokensArr.push({token, tokenType});
+        }
     }
     return tokensArr
 }
@@ -184,7 +220,20 @@ const isWhiteSpace = (c) => {
 
 
 const isReservedWord = (token) => {
-    return /(if|then|else|end|repeat|until|read|write|int|float)/i.test(token);
+    return /(if|then|else|end|repeat|until|read|write|int|float|begin)/i.test(token);
 }
 
-module.exports = lineTokenizer;
+const SYMBOLSTYPES = {
+    '+': 'PLUS',
+    '-': 'MINUS',
+    '*': 'MULTIBLICATION',
+    '/': 'DIVISION',
+    '(': 'OPEN BRACKET',
+    ')': 'CLOSE BRACKET',
+    ';': 'SIMICOLUMN',
+    '=': 'EQUAL',
+    '<': 'LESS THAN',
+    ':=': 'ASSIGN'
+}
+
+module.exports = tokenizer;

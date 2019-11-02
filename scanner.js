@@ -1,10 +1,9 @@
 const fs = require('fs')
-const lexicalAnalysis = require('./lexical-analysis');
+const tokenizer = require('./tokenizer');
 
 fs.readFile('./tiny.txt', 'utf8', (err, data) => {
     if(err) throw err;
-    data = data.split('\n');
-    const tokens = lexicalAnalysis(data)
+    const tokens = tokenizer(data)
     console.log(tokens)
 })
 
