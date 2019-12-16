@@ -1,23 +1,35 @@
 const fs = require ('fs');
 
 let TOKENS = [
-  {value: 'if', type: 'IF'},
+  {value: 'read', type: 'READ'},
   {value: 'x', type: 'IDENTIFIER'},
+  {value: ';', type: 'SEMICOLON'},
+  {value: 'if', type: 'IF'},
+  {value: '0', type: 'NUMBER'},
   {value: '<', type: 'LESSTHAN'},
-  {value: 'Y', type: 'IDENTIFIER'},
+  {value: 'x', type: 'IDENTIFIER'},
   {value: 'then', type: 'THEN'},
+  {value: 'fact', type: 'IDENTIFIER'},
+  {value: ':=', type: 'ASSIGN'},
+  {value: '1', type: 'NUMBER'},
+  {value: 'repeat', type: 'REPEAT'},
+  {value: 'fact', type: 'IDENTIFIER'},
+  {value: ':=', type: 'ASSIGN'},
+  {value: '*', type: 'MULT'},
+  {value: 'x', type: 'IDENTIFIER'},
+  {value: ';', type: 'SEMICOLON'},
   {value: 'x', type: 'IDENTIFIER'},
   {value: ':=', type: 'ASSIGN'},
-  {value: 'Y', type: 'IDENTIFIER'},
-  {value: 'end', type: 'END'},
-  {value: 'if', type: 'IF'},
-  {value: 'q', type: 'IDENTIFIER'},
-  {value: '<', type: 'LESSTHAN'},
-  {value: 'w', type: 'IDENTIFIER'},
-  {value: 'then', type: 'THEN'},
-  {value: 'z', type: 'IDENTIFIER'},
-  {value: ':=', type: 'ASSIGN'},
-  {value: 'a', type: 'IDENTIFIER'},
+  {value: 'x', type: 'IDENTIFIER'},
+  {value: '-', type: 'MINUS'},
+  {value: '1', type: 'NUMBER'},
+  {value: 'until', type: 'UNTIL'},
+  {value: 'x', type: 'INDENTIFIER'},
+  {value: '=', type: 'EQUAL'},
+  {value: '0', type: 'NUMBER'},
+  {value: ';', type: 'SEMICOLON'},
+  {value: 'write', type: 'WRITE'},
+  {value: 'fact', type: 'INDENTIFIER'},
   {value: 'end', type: 'END'},
 ];
 
@@ -61,7 +73,7 @@ function program () {
   getToken (); // get fist token
 
   let tree = null;
-  while (CURRENTTOKEN != -1) {
+  while (TOKENINDEX < TOKENS.length) {
     tree = stmt_Sequence ();
     TREE.childs.push (tree);
   }
@@ -70,9 +82,19 @@ function program () {
 }
 
 function stmt_Sequence () {
-  return (tree = statement ());
-  // do {
-  // } while (CURRENTTOKEN.type === ';');
+  let tree = {
+    title: 'stmt_sequence',
+    childs: []
+  }
+
+  let temp = null;
+
+  do {
+    temp = statement ();
+    tree.childs.push(temp);
+  } while (CURRENTTOKEN.type === 'SEMICOLON');
+
+  return tree;
 }
 
 function statement () {
@@ -100,6 +122,14 @@ function statement () {
 
     case 'write':
       subtree = write_stmt ();
+      break;
+    
+    case 'semicolon':
+      match('SEMICOLON')
+      subtree = {
+        title: 'SEMICOLON',
+        childs: []
+      }
       break;
   }
 
