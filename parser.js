@@ -12,6 +12,7 @@ let TOKENS = [
   {value: 'fact', type: 'IDENTIFIER'},
   {value: ':=', type: 'ASSIGN'},
   {value: '1', type: 'NUMBER'},
+  {value: ';', type: 'SEMICOLON'},
   {value: 'repeat', type: 'REPEAT'},
   {value: 'fact', type: 'IDENTIFIER'},
   {value: ':=', type: 'ASSIGN'},
@@ -24,12 +25,12 @@ let TOKENS = [
   {value: '-', type: 'MINUS'},
   {value: '1', type: 'NUMBER'},
   {value: 'until', type: 'UNTIL'},
-  {value: 'x', type: 'INDENTIFIER'},
+  {value: 'x', type: 'IDENTIFIER'},
   {value: '=', type: 'EQUAL'},
   {value: '0', type: 'NUMBER'},
   {value: ';', type: 'SEMICOLON'},
   {value: 'write', type: 'WRITE'},
-  {value: 'fact', type: 'INDENTIFIER'},
+  {value: 'fact', type: 'IDENTIFIER'},
   {value: 'end', type: 'END'},
 ];
 
@@ -89,10 +90,14 @@ function stmt_Sequence () {
 
   let temp = null;
 
-  do {
+  temp = statement ();
+  tree.childs.push(temp);
+
+  while (CURRENTTOKEN.type === 'SEMICOLON') {
+    match('SEMICOLON');
     temp = statement ();
     tree.childs.push(temp);
-  } while (CURRENTTOKEN.type === 'SEMICOLON');
+  }
 
   return tree;
 }
@@ -122,14 +127,6 @@ function statement () {
 
     case 'write':
       subtree = write_stmt ();
-      break;
-    
-    case 'semicolon':
-      match('SEMICOLON')
-      subtree = {
-        title: 'SEMICOLON',
-        childs: []
-      }
       break;
   }
 
