@@ -1,5 +1,6 @@
 const fs = require ('fs');
 
+// main tokens to overwrite
 let TOKENS = [
   {value: 'read', type: 'READ'},
   {value: 'x', type: 'IDENTIFIER'},
@@ -34,35 +35,18 @@ let TOKENS = [
   {value: 'end', type: 'END'},
 ];
 
-VALIDSTMT = [
-  'SEMICOLON',
-  'IF',
-  'THEN',
-  'END',
-  'REPEAT',
-  'UNTIL',
-  'IDENTIFIER',
-  'ASSIGN',
-  'READ',
-  'WRITE',
-  'LESSTHAN',
-  'EQUAL',
-  'PLUS',
-  'MINUS',
-  'MULT',
-  'DIV',
-  'OPENBRACKET',
-  'CLOSEDBRACKET',
-  'NUMBER',
-];
+// VALIDSTMT = [ 'SEMICOLON',  'IF',  'THEN',  'END',  'REPEAT',  'UNTIL',  'IDENTIFIER',  'ASSIGN',  'READ',  'WRITE',  'LESSTHAN',  'EQUAL',  'PLUS',  'MINUS',  'MULT',  'DIV',  'OPENBRACKET',  'CLOSEDBRACKET',  'NUMBER',];
 
+// Generated tree to display
 let TREE = {
   title: 'ROOT',
   childs: [],
 };
 
+
 let TOKENINDEX = 0;
 let CURRENTTOKEN = null;
+
 function getToken () {
   if (TOKENINDEX >= TOKENS.length) return -1;
   CURRENTTOKEN = TOKENS[TOKENINDEX];
@@ -79,6 +63,7 @@ function program () {
     TREE.childs.push (tree);
   }
 
+  // Write Tree to out.json
   fs.writeFileSync ('out.json', JSON.stringify (TREE, null, 2));
 }
 
@@ -128,6 +113,11 @@ function statement () {
     case 'write':
       subtree = write_stmt ();
       break;
+
+    default: 
+      throw new Error (`Invalid Token Type`);
+      break;
+
   }
 
   return subtree;
@@ -387,10 +377,15 @@ function factor () {
 }
 
 function match (expected) {
-  console.log ('current', CURRENTTOKEN);
-  console.log ('expexted', expected.toLowerCase ());
-  if (CURRENTTOKEN.type.toLowerCase () === expected.toLowerCase ()) getToken ();
-  else throw new Error ('Token not matched');
+  // console.log ('current', CURRENTTOKEN);
+  // console.log ('expexted', expected.toLowerCase ());
+  if (CURRENTTOKEN.type.toLowerCase () === expected.toLowerCase ()) {
+    getToken ();
+    return;
+  }
+
+  let errmsg = 'Token not matched token type: ' + CURRENTTOKEN.type + '- expected: ' + expected;
+  throw new Error (errmsg);
 }
 
 // Run code

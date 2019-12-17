@@ -16,7 +16,12 @@
               "childs": []
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "title": "stmt_sequence",
+      "childs": [
         {
           "title": "if-stmt",
           "childs": [
