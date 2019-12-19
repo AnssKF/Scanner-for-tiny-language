@@ -1,5 +1,9 @@
 const fs = require ('fs');
 
+const NODETYPE = {
+  SQR: 1,
+  CIRCLE: 2
+}
 // main tokens to overwrite
 let TOKENS = [
   {value: 'read', type: 'READ'},
@@ -13,12 +17,19 @@ let TOKENS = [
   {value: 'fact', type: 'IDENTIFIER'},
   {value: ':=', type: 'ASSIGN'},
   {value: '1', type: 'NUMBER'},
+  {value: '-', type: 'MINUS'},
+  {value: '2', type: 'NUMBER'},
+  {value: '+', type: 'PLUS'},
+  {value: '3', type: 'NUMBER'},
   {value: ';', type: 'SEMICOLON'},
   {value: 'repeat', type: 'REPEAT'},
   {value: 'fact', type: 'IDENTIFIER'},
   {value: ':=', type: 'ASSIGN'},
+  {value: 'fact', type: 'IDENTIFIER'},
   {value: '*', type: 'MULT'},
   {value: 'x', type: 'IDENTIFIER'},
+  {value: '/', type: 'MULT'},
+  {value: 'y', type: 'IDENTIFIER'},
   {value: ';', type: 'SEMICOLON'},
   {value: 'x', type: 'IDENTIFIER'},
   {value: ':=', type: 'ASSIGN'},
@@ -39,8 +50,9 @@ let TOKENS = [
 
 // Generated tree to display
 let TREE = {
-  title: 'ROOT',
+  title: 'program',
   childs: [],
+  type:NODETYPE.SQR
 };
 
 
@@ -60,7 +72,7 @@ function program () {
   let tree = null;
   while (TOKENINDEX < TOKENS.length) {
     tree = stmt_Sequence ();
-    TREE.childs.push (tree);
+    TREE.childs = TREE.childs.concat (tree.childs);
   }
 
   // Write Tree to out.json
@@ -70,7 +82,8 @@ function program () {
 function stmt_Sequence () {
   let tree = {
     title: 'stmt_sequence',
-    childs: []
+    childs: [],
+    type:NODETYPE.SQR
   }
 
   let temp = null;
@@ -125,32 +138,36 @@ function statement () {
 
 function if_stmt () {
   let subtree = {
-    title: 'if-stmt',
+    title: 'if',
     childs: [],
+    type:NODETYPE.SQR
   };
 
   let temp = null;
 
-  subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
   match ('if');
 
   temp = exp ();
   subtree.childs.push (temp);
 
-  subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
   match ('then');
 
   temp = stmt_Sequence ();
-  subtree.childs.push (temp);
+  subtree.childs = subtree.childs.concat (temp.childs);
 
   if (CURRENTTOKEN.type == 'else') {
-    subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
+    let elsetree = {
+      title: 'else',
+      childs: [],
+      type:NODETYPE.SQR
+    };
     match ('else');
 
     temp = stmt_Sequence ();
-    subtree.childs.push (temp);
+    elsetree.childs = elsetree.childs.concat (temp.childs);
+
+    subtree.childs.push(elsetree)
   }
-  subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
   match ('end');
 
   return subtree;
@@ -158,19 +175,18 @@ function if_stmt () {
 
 function repeat_stmt () {
   let subtree = {
-    title: 'repeat-stmt',
+    title: 'repeat',
     childs: [],
+    type:NODETYPE.SQR
   };
 
   let temp = null;
 
-  subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
   match ('repeat');
 
   temp = stmt_Sequence ();
-  subtree.childs.push (temp);
+  subtree.childs = subtree.childs.concat (temp.childs);
 
-  subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
   match ('until');
 
   temp = exp ();
@@ -181,14 +197,14 @@ function repeat_stmt () {
 
 function assign_stmt () {
   let subtree = {
-    title: 'assign-stmt',
+    title: 'assign',
     childs: [],
+    type:NODETYPE.SQR
   };
 
-  subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
+  subtree.title = subtree.title + ' (' +CURRENTTOKEN.value + ')';
   match ('identifier');
 
-  subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
   match ('ASSIGN');
 
   temp = exp ();
@@ -199,14 +215,16 @@ function assign_stmt () {
 
 function read_stmt () {
   let subtree = {
-    title: 'read-stmt',
+    title: 'read',
     childs: [],
+    type:NODETYPE.SQR
   };
 
-  subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
+  // subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
   match ('read');
 
-  subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
+  // subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
+  subtree.title = subtree.title + ' (' + CURRENTTOKEN.value + ')';
   match ('identifier');
 
   return subtree;
@@ -214,13 +232,14 @@ function read_stmt () {
 
 function write_stmt () {
   let subtree = {
-    title: 'write-stmt',
+    title: 'write',
     childs: [],
+    type:NODETYPE.SQR
   };
 
   let temp = null;
 
-  subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
+  // subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
   match ('write');
 
   temp = exp ();
@@ -232,34 +251,37 @@ function exp () {
   let subtree = {
     title: 'exp',
     childs: [],
+    type:NODETYPE.SQR
   };
 
-  let temp = null;
+  let opFlag = false; // flag indecate that there is op to be at root
 
-  temp = simple_exp ();
-  subtree.childs.push (temp);
+  let left = simple_exp ();
 
   if (CURRENTTOKEN.type === 'LESSTHAN' || CURRENTTOKEN.type === 'EQUAL') {
-    temp = comparison_op ();
-    subtree.childs.push (temp);
+    opFlag = true;
 
-    temp = simple_exp ();
-    subtree.childs.push (temp);
+    subtree = comparison_op ();
+    subtree.childs.push(left);
+
+    let right = simple_exp ();
+    subtree.childs.push (right);
   }
-  return subtree;
+  return opFlag ? subtree: left;
 }
 
 function comparison_op () {
   let subtree = {
-    title: 'comparison-op',
+    title: 'op',
     childs: [],
+    type:NODETYPE.CIRCLE
   };
 
   if (CURRENTTOKEN.type === 'LESSTHAN') {
-    subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
+    subtree.title = subtree.title + ' (' + CURRENTTOKEN.value + ')';
     match ('LESSTHAN');
   } else if (CURRENTTOKEN.type === 'EQUAL') {
-    subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
+    subtree.title = subtree.title + ' (' + CURRENTTOKEN.value + ')';
     match ('EQUAL');
   }
   return subtree;
@@ -269,35 +291,38 @@ function simple_exp () {
   let subtree = {
     title: 'simple-exp',
     childs: [],
+    type:NODETYPE.SQR
   };
 
-  let temp = null;
+  let opFlag = false;
 
-  temp = term ();
-  subtree.childs.push (temp);
+  let left = term ();
 
-  while (CURRENTTOKEN.type === 'PLUS' || CURRENTTOKEN.type === 'MINUS') {
-    temp = addop ();
-    subtree.childs.push (temp);
+  if (CURRENTTOKEN.type === 'PLUS' || CURRENTTOKEN.type === 'MINUS') {
+    opFlag = true;
 
-    temp = term ();
-    subtree.childs.push (temp);
+    subtree = addop ();
+    subtree.childs.push (left);
+
+    let right = simple_exp ()
+    subtree.childs.push (right);
   }
-  return subtree;
+  return opFlag? subtree: left;
 }
 
 function addop () {
   let subtree = {
-    title: 'addop',
+    title: 'op',
     childs: [],
+    type:NODETYPE.CIRCLE
   };
 
   if (CURRENTTOKEN.type === 'PLUS') {
-    subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
+    subtree.title = subtree.title + ' (' + CURRENTTOKEN.value + ')';
     match ('PLUS');
   }
   if (CURRENTTOKEN.type === 'MINUS') {
-    subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
+    subtree.title = subtree.title + ' (' + CURRENTTOKEN.value + ')';
     match ('MINUS');
   }
   return subtree;
@@ -307,33 +332,37 @@ function term () {
   let subtree = {
     title: 'term',
     childs: [],
+    type:NODETYPE.SQR
   };
 
-  let temp = null;
-  // done
-  temp = factor ();
-  subtree.childs.push (temp);
-  while (CURRENTTOKEN.type === 'MULT' || CURRENTTOKEN.type === 'DIV') {
-    temp = mulop ();
-    subtree.childs.push (temp);
+  let opFlag = false;
 
-    temp = factor ();
-    subtree.childs.push (temp);
+  let left = factor ();
+
+  if (CURRENTTOKEN.type === 'MULT' || CURRENTTOKEN.type === 'DIV') {
+    opFlag = true;
+
+    subtree = mulop ();
+    subtree.childs.push (left);
+
+    let right = term ();
+    subtree.childs.push (right);
   }
-  return subtree;
+  return opFlag? subtree: left;
 }
 
 function mulop () {
   let subtree = {
-    title: 'mulop',
+    title: 'op',
     childs: [],
+    type:NODETYPE.CIRCLE
   };
 
   if (CURRENTTOKEN.type === 'MULT') {
-    subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
+    subtree.title = subtree.title + ' (' + CURRENTTOKEN.value + ')';
     match ('MULT');
   } else if (CURRENTTOKEN.type === 'DIV') {
-    subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
+    subtree.title = subtree.title + ' (' + CURRENTTOKEN.value + ')';
     match ('DIV');
   }
   return subtree;
@@ -343,33 +372,27 @@ function factor () {
   let subtree = {
     title: 'factor',
     childs: [],
+    type:NODETYPE.SQR
   };
-
-  let temp = null;
 
   let tokenType = CURRENTTOKEN.type.toLowerCase ();
 
   switch (tokenType) {
     case '(':
-      subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
       match ('OPENBRACKET');
 
-      temp = exp ();
-      subtree.childs.push (temp);
+      subtree = exp ();
 
-      subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
       match ('CLOSEDBRACKET');
       break;
 
     case 'number':
-      // push to tree
-      subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
+      subtree = {title: 'Const' + ' ('+ CURRENTTOKEN.value + ')', childs: [], type:NODETYPE.CIRCLE};
       match ('NUMBER');
       break;
 
     case 'identifier':
-      // push to tree
-      subtree.childs.push ({title: CURRENTTOKEN.value, childs: []});
+      subtree = {title: 'ID' + ' ('+ CURRENTTOKEN.value + ')', childs: [], type:NODETYPE.CIRCLE};
       match ('IDENTIFIER');
       break;
   }
@@ -377,10 +400,16 @@ function factor () {
 }
 
 function match (expected) {
-  // console.log ('current', CURRENTTOKEN);
-  // console.log ('expexted', expected.toLowerCase ());
   if (CURRENTTOKEN.type.toLowerCase () === expected.toLowerCase ()) {
     getToken ();
+
+    // if(CURRENTTOKEN.value == '{'){
+    //   while(CURRENTTOKEN.value != '}'){
+    //     getToken();
+    //   }
+    //   getToken();
+    // }
+
     return;
   }
 

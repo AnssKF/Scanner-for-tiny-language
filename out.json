@@ -1,352 +1,154 @@
 {
-  "title": "ROOT",
+  "title": "program",
   "childs": [
     {
-      "title": "stmt_sequence",
-      "childs": [
-        {
-          "title": "read-stmt",
-          "childs": [
-            {
-              "title": "read",
-              "childs": []
-            },
-            {
-              "title": "x",
-              "childs": []
-            }
-          ]
-        }
-      ]
+      "title": "read (x)",
+      "childs": [],
+      "type": 1
     },
     {
-      "title": "stmt_sequence",
+      "title": "if",
       "childs": [
         {
-          "title": "if-stmt",
+          "title": "op (<)",
           "childs": [
             {
-              "title": "if",
-              "childs": []
+              "title": "Const (0)",
+              "childs": [],
+              "type": 2
             },
             {
-              "title": "exp",
-              "childs": [
-                {
-                  "title": "simple-exp",
-                  "childs": [
-                    {
-                      "title": "term",
-                      "childs": [
-                        {
-                          "title": "factor",
-                          "childs": [
-                            {
-                              "title": "0",
-                              "childs": []
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "title": "comparison-op",
-                  "childs": [
-                    {
-                      "title": "<",
-                      "childs": []
-                    }
-                  ]
-                },
-                {
-                  "title": "simple-exp",
-                  "childs": [
-                    {
-                      "title": "term",
-                      "childs": [
-                        {
-                          "title": "factor",
-                          "childs": [
-                            {
-                              "title": "x",
-                              "childs": []
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "title": "then",
-              "childs": []
-            },
-            {
-              "title": "stmt_sequence",
-              "childs": [
-                {
-                  "title": "assign-stmt",
-                  "childs": [
-                    {
-                      "title": "fact",
-                      "childs": []
-                    },
-                    {
-                      "title": ":=",
-                      "childs": []
-                    },
-                    {
-                      "title": "exp",
-                      "childs": [
-                        {
-                          "title": "simple-exp",
-                          "childs": [
-                            {
-                              "title": "term",
-                              "childs": [
-                                {
-                                  "title": "factor",
-                                  "childs": [
-                                    {
-                                      "title": "1",
-                                      "childs": []
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "title": "repeat-stmt",
-                  "childs": [
-                    {
-                      "title": "repeat",
-                      "childs": []
-                    },
-                    {
-                      "title": "stmt_sequence",
-                      "childs": [
-                        {
-                          "title": "assign-stmt",
-                          "childs": [
-                            {
-                              "title": "fact",
-                              "childs": []
-                            },
-                            {
-                              "title": ":=",
-                              "childs": []
-                            },
-                            {
-                              "title": "exp",
-                              "childs": [
-                                {
-                                  "title": "simple-exp",
-                                  "childs": [
-                                    {
-                                      "title": "term",
-                                      "childs": [
-                                        {
-                                          "title": "factor",
-                                          "childs": []
-                                        },
-                                        {
-                                          "title": "mulop",
-                                          "childs": [
-                                            {
-                                              "title": "*",
-                                              "childs": []
-                                            }
-                                          ]
-                                        },
-                                        {
-                                          "title": "factor",
-                                          "childs": [
-                                            {
-                                              "title": "x",
-                                              "childs": []
-                                            }
-                                          ]
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        {
-                          "title": "assign-stmt",
-                          "childs": [
-                            {
-                              "title": "x",
-                              "childs": []
-                            },
-                            {
-                              "title": ":=",
-                              "childs": []
-                            },
-                            {
-                              "title": "exp",
-                              "childs": [
-                                {
-                                  "title": "simple-exp",
-                                  "childs": [
-                                    {
-                                      "title": "term",
-                                      "childs": [
-                                        {
-                                          "title": "factor",
-                                          "childs": [
-                                            {
-                                              "title": "x",
-                                              "childs": []
-                                            }
-                                          ]
-                                        }
-                                      ]
-                                    },
-                                    {
-                                      "title": "addop",
-                                      "childs": [
-                                        {
-                                          "title": "-",
-                                          "childs": []
-                                        }
-                                      ]
-                                    },
-                                    {
-                                      "title": "term",
-                                      "childs": [
-                                        {
-                                          "title": "factor",
-                                          "childs": [
-                                            {
-                                              "title": "1",
-                                              "childs": []
-                                            }
-                                          ]
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "title": "until",
-                      "childs": []
-                    },
-                    {
-                      "title": "exp",
-                      "childs": [
-                        {
-                          "title": "simple-exp",
-                          "childs": [
-                            {
-                              "title": "term",
-                              "childs": [
-                                {
-                                  "title": "factor",
-                                  "childs": [
-                                    {
-                                      "title": "x",
-                                      "childs": []
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        {
-                          "title": "comparison-op",
-                          "childs": [
-                            {
-                              "title": "=",
-                              "childs": []
-                            }
-                          ]
-                        },
-                        {
-                          "title": "simple-exp",
-                          "childs": [
-                            {
-                              "title": "term",
-                              "childs": [
-                                {
-                                  "title": "factor",
-                                  "childs": [
-                                    {
-                                      "title": "0",
-                                      "childs": []
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "title": "write-stmt",
-                  "childs": [
-                    {
-                      "title": "write",
-                      "childs": []
-                    },
-                    {
-                      "title": "exp",
-                      "childs": [
-                        {
-                          "title": "simple-exp",
-                          "childs": [
-                            {
-                              "title": "term",
-                              "childs": [
-                                {
-                                  "title": "factor",
-                                  "childs": [
-                                    {
-                                      "title": "fact",
-                                      "childs": []
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "title": "end",
-              "childs": []
+              "title": "ID (x)",
+              "childs": [],
+              "type": 2
             }
-          ]
+          ],
+          "type": 2
+        },
+        {
+          "title": "assign (fact)",
+          "childs": [
+            {
+              "title": "op (-)",
+              "childs": [
+                {
+                  "title": "Const (1)",
+                  "childs": [],
+                  "type": 2
+                },
+                {
+                  "title": "op (+)",
+                  "childs": [
+                    {
+                      "title": "Const (2)",
+                      "childs": [],
+                      "type": 2
+                    },
+                    {
+                      "title": "Const (3)",
+                      "childs": [],
+                      "type": 2
+                    }
+                  ],
+                  "type": 2
+                }
+              ],
+              "type": 2
+            }
+          ],
+          "type": 1
+        },
+        {
+          "title": "repeat",
+          "childs": [
+            {
+              "title": "assign (fact)",
+              "childs": [
+                {
+                  "title": "op (*)",
+                  "childs": [
+                    {
+                      "title": "ID (fact)",
+                      "childs": [],
+                      "type": 2
+                    },
+                    {
+                      "title": "op (/)",
+                      "childs": [
+                        {
+                          "title": "ID (x)",
+                          "childs": [],
+                          "type": 2
+                        },
+                        {
+                          "title": "ID (y)",
+                          "childs": [],
+                          "type": 2
+                        }
+                      ],
+                      "type": 2
+                    }
+                  ],
+                  "type": 2
+                }
+              ],
+              "type": 1
+            },
+            {
+              "title": "assign (x)",
+              "childs": [
+                {
+                  "title": "op (-)",
+                  "childs": [
+                    {
+                      "title": "ID (x)",
+                      "childs": [],
+                      "type": 2
+                    },
+                    {
+                      "title": "Const (1)",
+                      "childs": [],
+                      "type": 2
+                    }
+                  ],
+                  "type": 2
+                }
+              ],
+              "type": 1
+            },
+            {
+              "title": "op (=)",
+              "childs": [
+                {
+                  "title": "ID (x)",
+                  "childs": [],
+                  "type": 2
+                },
+                {
+                  "title": "Const (0)",
+                  "childs": [],
+                  "type": 2
+                }
+              ],
+              "type": 2
+            }
+          ],
+          "type": 1
+        },
+        {
+          "title": "write",
+          "childs": [
+            {
+              "title": "ID (fact)",
+              "childs": [],
+              "type": 2
+            }
+          ],
+          "type": 1
         }
-      ]
+      ],
+      "type": 1
     }
-  ]
+  ],
+  "type": 1
 }
